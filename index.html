@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- SEO Meta Tags -->
+    <title>LBSB - Lucas Stucky</title>
+    <meta name="description" content="LBSB - An interactive experience showcasing growth, creativity, and giving back. Explore the journey of learning and creation.">
+    <meta name="keywords" content="LBSB, Lucas Stucky, creative, portfolio, interactive, design">
+    <meta name="author" content="Lucas Stucky">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lucasstucky.xyz/">
+    <meta property="og:title" content="LBSB - Lucas Stucky">
+    <meta property="og:description" content="You learn and grow, to create and give back. An interactive experience.">
+    <meta property="og:image" content="https://lucasstucky.xyz/og-image.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LBSB - Lucas Stucky">
+    <meta name="twitter:description" content="You learn and grow, to create and give back. An interactive experience.">
+    <meta name="twitter:image" content="https://lucasstucky.xyz/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%231e1914' d='M16 28c0 0-1-1-1-2s1-2 1-2V20c-3 0-6 2-8 4l1-5c1-2 4-3 7-3V12c-2-1-3-3-3-5 0 0 2 1 3 3V6c0-2 0-4 0-4s0 2 0 4v4c1-2 3-3 3-3 0 2-1 4-3 5v4c3 0 6 1 7 3l1 5c-2-2-5-4-8-4v4s1 1 1 2-1 2-1 2z'/></svg>">
+    
+    <!-- Preload Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,400&display=swap" as="style">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            height: 200vh;
+            background: linear-gradient(to bottom, #fafafa 0%, #f5f5f0 100%);
+            font-family: Georgia, serif;
+            overflow-x: hidden;
+        }
+        
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            will-change: transform;
+        }
+        
+        canvas {
+            background: transparent;
+            will-change: transform;
+        }
+        
+        /* Hide shadow on mobile for cleaner look */
+        @media (max-width: 768px) {
+            canvas {
+                box-shadow: none;
+                background: transparent;
+            }
+            body {
+                background: #fdfcfa;
+            }
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(60, 55, 50, 0.6);
+            font-size: 14px;
+            font-style: italic;
+            transition: opacity 0.5s;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .scroll-indicator {
+                bottom: 20px;
+                font-size: 12px;
+            }
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 6px;
+            height: 200px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .progress-bar {
+                right: 10px;
+                top: 10px;
+                height: 100px;
+                width: 4px;
+            }
+        }
+        
+        .progress-fill {
+            width: 100%;
+            background: rgba(60, 50, 40, 0.5);
+            border-radius: 3px;
+            transition: height 0.1s;
+        }
+        
+        /* Navigation bar - in reserved top space */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+            background: linear-gradient(to bottom, #fafafa 0%, rgba(250, 250, 250, 0) 100%);
+            will-change: opacity;
+        }
+        
+        .nav-bar.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .nav-btn {
+            position: relative;
+            padding: 7px 18px;
+            background: transparent;
+            border: 1.5px solid rgba(30, 25, 20, 0.8);
+            color: rgba(30, 25, 20, 0.9);
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 11px;
+            cursor: pointer;
+            clip-path: polygon(
+                0 0,
+                calc(100% - 10px) 0,
+                100% 10px,
+                100% 100%,
+                10px 100%,
+                0 calc(100% - 10px)
+            );
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        /* Logo - top left */
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            color: rgba(30, 25, 20, 0.9);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 100;
+        }
+        
+        .logo.visible {
+            opacity: 1;
+        }
+        
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 11px;
+            color: rgba(60, 55, 50, 0.6);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 100;
+        }
+        
+        .footer.visible {
+            opacity: 1;
+        }
+        
+        .footer a {
+            color: rgba(60, 55, 50, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer a:hover {
+            color: rgba(30, 25, 20, 0.9);
+        }
+        
+        .linkedin-icon {
+            width: 18px;
+            height: 18px;
+            fill: rgba(60, 55, 50, 0.6);
+            transition: fill 0.3s ease;
+        }
+        
+        .linkedin-icon:hover {
+            fill: rgba(30, 25, 20, 0.9);
+        }
+        
+        @media (max-width: 768px) {
+            .logo {
+                top: 10px;
+                left: 10px;
+                font-size: 12px;
+            }
+            .footer {
+                bottom: 10px;
+                font-size: 9px;
+                gap: 15px;
+            }
+            .linkedin-icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        
+        .nav-btn:hover {
+            background: rgba(30, 25, 20, 0.1);
+        }
+        
+        .nav-btn.active {
+            background: rgba(30, 25, 20, 0.85);
+            color: #fdfcfa;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1.5px solid rgba(30, 25, 20, 0.8);
+            clip-path: polygon(
+                0 0,
+                calc(100% - 10px) 0,
+                100% 10px,
+                100% 100%,
+                10px 100%,
+                0 calc(100% - 10px)
+            );
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar {
+                top: 10px;
+                gap: 10px;
+            }
+            .nav-btn {
+                padding: 6px 14px;
+                font-size: 10px;
+                clip-path: polygon(
+                    0 0,
+                    calc(100% - 7px) 0,
+                    100% 7px,
+                    100% 100%,
+                    7px 100%,
+                    0 calc(100% - 7px)
+                );
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar" id="navBar">
+        <button class="nav-btn active" data-section="home">Home</button>
+        <a href="idea-lab.html" class="nav-btn" data-section="idea-lab">Idea Lab</a>
+    </nav>
+    
+    <div class="logo" id="logo">LBSB</div>
+    
+    <footer class="footer" id="footer">
+        <span>© 2025 Lucas Stucky. All rights reserved.</span>
+        <a href="https://www.linkedin.com/in/lucas-stucky-19b366185/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <svg class="linkedin-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+        </a>
+    </footer>
+    
+    <div class="canvas-container">
+        <canvas id="treeCanvas" width="900" height="750"></canvas>
+    </div>
+    
+    <div class="scroll-indicator" id="scrollHint">↓ Discover ↓</div>
+    
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('treeCanvas');
+        const ctx = canvas.getContext('2d');
+        const scrollHint = document.getElementById('scrollHint');
+        const progressFill = document.getElementById('progressFill');
+        const navBar = document.getElementById('navBar');
+        const logo = document.getElementById('logo');
+        const footer = document.getElementById('footer');
+        
+        // Responsive canvas sizing - full width, leaves space at top for nav
+        let scale = 1;
+        let canvasWidth = window.innerWidth;
+        let canvasHeight = window.innerHeight;
+        const NAV_HEIGHT = 60; // Space reserved for navigation
+        
+        function resizeCanvas() {
+            canvasWidth = window.innerWidth;
+            canvasHeight = window.innerHeight - NAV_HEIGHT;
+            
+            // Position canvas below nav area
+            canvas.style.position = 'absolute';
+            canvas.style.top = NAV_HEIGHT + 'px';
+            canvas.style.left = '0';
+            canvas.style.width = canvasWidth + 'px';
+            canvas.style.height = canvasHeight + 'px';
+            
+            // Keep internal resolution high for crisp rendering
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.scale(dpr, dpr);
+            
+            // Update GROUND_Y constant (55% down to leave room for nav at top)
+            GROUND_Y = canvasHeight * 0.55;
+            
+            // Reinitialize tree with new dimensions
+            initializeTree();
+        }
+        
+        // Random seed - different each page load
+        let globalSeed = Math.random() * 100000;
+        
+        // Mouse/touch position for wind effect
+        let mouseX = 0;
+        let mouseY = 0;
+        let prevMouseX = 0;
+        let prevMouseY = 0;
+        let mouseVelX = 0;
+        let mouseVelY = 0;
+        let smoothWindX = 0;
+        let smoothWindY = 0;
+        let isMouseOverCanvas = false;
+        
+        // Seeded random
+        let currentSeed = globalSeed;
+        function seededRandom() {
+            currentSeed = (currentSeed * 9301 + 49297) % 233280;
+            return currentSeed / 233280;
+        }
+        
+        function resetSeed(seed) {
+            currentSeed = seed;
+        }
+        
+        function randomRange(min, max) {
+            return min + seededRandom() * (max - min);
+        }
+        
+        let branchCache = [];
+        let rootCache = [];
+        
+        // Ground Y - will be updated on resize
+        let GROUND_Y = 750 * 0.5;
+        
+        // UNIFIED branch generation with SEQUENTIAL GROWTH TIMING + RANDOMNESS
+        // Each branch tracks its parent and calculates when it should start/end growing
+        function generateBranch(x, y, angle, length, thickness, depth, maxDepth, isRoot, cache, cumulativeTime = 0) {
+            if (depth > maxDepth || thickness < 0.3 || length < 2) return cumulativeTime;
+            
+            const curve = randomRange(-0.12, 0.12);
+            const effectiveAngle = angle + curve;
+            
+            const yCompression = isRoot ? 0.35 : 1.0;
+            
+            let endX = x + Math.sin(effectiveAngle) * length;
+            let endY = isRoot 
+                ? y + Math.cos(effectiveAngle) * length * yCompression
+                : y - Math.cos(effectiveAngle) * length;
+            
+            // CLAMP: Roots must stay below ground
+            if (isRoot && endY < GROUND_Y + 5) {
+                endY = GROUND_Y + 5 + randomRange(0, 10);
+            }
+            
+            const midX = (x + endX) / 2 + randomRange(-length * 0.06, length * 0.06);
+            const midY = (y + endY) / 2 + randomRange(-length * 0.04, length * 0.04);
+            
+            // RANDOMIZED TIMING
+            // Add random delay to start time (staggered starts)
+            const startDelay = randomRange(0, 0.03);
+            // Randomize growth speed (some branches grow faster/slower)
+            const speedVariation = randomRange(0.7, 1.4);
+            
+            // Growth timing with randomness
+            const baseDuration = length / 400;
+            const growthDuration = baseDuration * speedVariation;
+            const growthStart = cumulativeTime + startDelay;
+            const growthEnd = growthStart + growthDuration;
+            
+            const branchIndex = cache.length;
+            
+            cache.push({
+                startX: x,
+                startY: y,
+                endX: endX,
+                endY: endY,
+                midX: midX,
+                midY: midY,
+                thickness: thickness,
+                depth: depth,
+                isRoot: isRoot,
+                length: length,
+                growthStart: growthStart,
+                growthEnd: growthEnd
+            });
+            
+            // Recursion parameters
+            const lengthDecay = isRoot ? randomRange(0.68, 0.82) : randomRange(0.64, 0.76);
+            const thicknessDecay = isRoot ? randomRange(0.58, 0.72) : randomRange(0.62, 0.74);
+            const newLength = length * lengthDecay;
+            const newThickness = thickness * thicknessDecay;
+            
+            const numBranches = depth < 2 
+                ? Math.floor(randomRange(2, 4)) 
+                : Math.floor(randomRange(2, 3.3));
+            
+            const baseSpread = isRoot ? randomRange(0.35, 0.6) : randomRange(0.3, 0.6);
+            
+            // Track max time for this subtree
+            let maxChildTime = growthEnd;
+            
+            for (let i = 0; i < numBranches; i++) {
+                let childAngle;
+                if (numBranches === 2) {
+                    childAngle = angle + (i === 0 ? -baseSpread : baseSpread) * randomRange(0.8, 1.2);
+                } else {
+                    const t = i / (numBranches - 1);
+                    childAngle = angle + (t - 0.5) * 2 * baseSpread + randomRange(-0.1, 0.1);
+                }
+                
+                if (seededRandom() > 0.08 || depth < 2) {
+                    // Children start when THIS branch ends
+                    const childEndTime = generateBranch(
+                        endX, endY, childAngle, newLength, newThickness, 
+                        depth + 1, maxDepth, isRoot, cache, growthEnd
+                    );
+                    maxChildTime = Math.max(maxChildTime, childEndTime);
+                }
+            }
+            
+            // Side branches
+            if (depth > 1 && depth < maxDepth - 2 && seededRandom() > 0.72) {
+                const sideAngle = angle + (seededRandom() > 0.5 ? 1 : -1) * randomRange(0.6, 1.0);
+                const branchPoint = randomRange(0.3, 0.6);
+                const sideX = x + (endX - x) * branchPoint;
+                const sideY = y + (endY - y) * branchPoint;
+                
+                // Side branches start partway through parent's growth
+                const sideStartTime = growthStart + (growthEnd - growthStart) * branchPoint;
+                
+                const sideEndTime = generateBranch(
+                    sideX, sideY, sideAngle, newLength * 0.65, newThickness * 0.55,
+                    depth + 2, maxDepth, isRoot, cache, sideStartTime
+                );
+                maxChildTime = Math.max(maxChildTime, sideEndTime);
+            }
+            
+            return maxChildTime;
+        }
+        
+        // Normalize growth times to 0-1 range and add post-normalization jitter
+        function normalizeGrowthTimes(cache, timeOffset, timeScale, jitterAmount = 0) {
+            cache.forEach(branch => {
+                branch.growthStart = timeOffset + branch.growthStart * timeScale;
+                branch.growthEnd = timeOffset + branch.growthEnd * timeScale;
+                
+                // Add post-normalization jitter for visible randomness
+                if (jitterAmount > 0) {
+                    const jitter = (Math.random() - 0.5) * jitterAmount;
+                    branch.growthStart = Math.max(timeOffset, branch.growthStart + jitter);
+                    branch.growthEnd = branch.growthEnd + jitter * 0.5; // less jitter on end
+                    
+                    // Add per-branch easing variation (0.5 = ease-out, 2 = ease-in)
+                    branch.easePower = 0.4 + Math.random() * 0.8; // range 0.4 - 1.2
+                }
+            });
+        }
+        
+        // Initialize tree structure
+        function initializeTree() {
+            const centerX = canvasWidth / 2;
+            const groundY = GROUND_Y;
+            const trunkTop = groundY - 85;
+            
+            // ============ ROOTS (grow first: 0.05 - 0.50) ============
+            rootCache = [];
+            const rootStartY = groundY + 3;
+            
+            // Tap root
+            resetSeed(globalSeed + 10000);
+            let maxRootTime = generateBranch(centerX, rootStartY + 5, 0, 40, 5, 0, 5, true, rootCache, 0);
+            
+            // LEFT side roots - staggered start times
+            resetSeed(globalSeed + 20000);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX - 10, rootStartY, -1.1, 75, 6, 0, 7, true, rootCache, randomRange(0, 0.05)));
+            resetSeed(globalSeed + 20001);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX - 8, rootStartY + 2, -0.85, 70, 5, 0, 7, true, rootCache, randomRange(0.02, 0.08)));
+            resetSeed(globalSeed + 20002);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX - 12, rootStartY + 1, -1.35, 60, 4, 0, 6, true, rootCache, randomRange(0.04, 0.10)));
+            resetSeed(globalSeed + 20003);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX - 6, rootStartY + 4, -0.6, 55, 3.5, 0, 6, true, rootCache, randomRange(0.03, 0.09)));
+            
+            // RIGHT side roots - staggered start times
+            resetSeed(globalSeed + 30000);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX + 10, rootStartY, 1.1, 75, 6, 0, 7, true, rootCache, randomRange(0, 0.06)));
+            resetSeed(globalSeed + 30001);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX + 8, rootStartY + 2, 0.85, 70, 5, 0, 7, true, rootCache, randomRange(0.01, 0.07)));
+            resetSeed(globalSeed + 30002);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX + 12, rootStartY + 1, 1.35, 60, 4, 0, 6, true, rootCache, randomRange(0.05, 0.11)));
+            resetSeed(globalSeed + 30003);
+            maxRootTime = Math.max(maxRootTime, generateBranch(centerX + 6, rootStartY + 4, 0.6, 55, 3.5, 0, 6, true, rootCache, randomRange(0.02, 0.08)));
+            
+            // Normalize root times to 0.05 - 1.0 range with jitter for randomness
+            const rootTimeScale = 0.95 / maxRootTime;
+            normalizeGrowthTimes(rootCache, 0.05, rootTimeScale, 0.08);
+            
+            // ============ CANOPY (grow after trunk: 0.45 - 1.0) ============
+            branchCache = [];
+            resetSeed(globalSeed);
+            
+            // Staggered branch starts for more organic growth
+            let maxBranchTime = generateBranch(centerX, trunkTop + 10, 0, 65, 10, 0, 11, false, branchCache, randomRange(0, 0.03));
+            maxBranchTime = Math.max(maxBranchTime, generateBranch(centerX - 6, trunkTop + 25, -0.35, 55, 8, 0, 10, false, branchCache, randomRange(0.02, 0.07)));
+            maxBranchTime = Math.max(maxBranchTime, generateBranch(centerX + 6, trunkTop + 25, 0.35, 55, 8, 0, 10, false, branchCache, randomRange(0.01, 0.06)));
+            maxBranchTime = Math.max(maxBranchTime, generateBranch(centerX - 4, trunkTop + 40, -0.55, 45, 6, 0, 9, false, branchCache, randomRange(0.04, 0.10)));
+            maxBranchTime = Math.max(maxBranchTime, generateBranch(centerX + 4, trunkTop + 40, 0.55, 45, 6, 0, 9, false, branchCache, randomRange(0.03, 0.09)));
+            maxBranchTime = Math.max(maxBranchTime, generateBranch(centerX - 2, trunkTop + 50, -0.2, 40, 5, 0, 9, false, branchCache, randomRange(0.06, 0.12)));
+            maxBranchTime = Math.max(maxBranchTime, generateBranch(centerX + 2, trunkTop + 50, 0.2, 40, 5, 0, 9, false, branchCache, randomRange(0.05, 0.11)));
+            
+            // Normalize branch times to 0.35 - 1.0 range with jitter
+            const branchTimeScale = 0.65 / maxBranchTime;
+            normalizeGrowthTimes(branchCache, 0.35, branchTimeScale, 0.06);
+            
+            // Sort by growth start time for proper draw order
+            branchCache.sort((a, b) => a.growthStart - b.growthStart);
+            rootCache.sort((a, b) => a.growthStart - b.growthStart);
+        }
+        
+        // Get wind vector based on cursor velocity
+        function getWindVector() {
+            const strength = Math.sqrt(smoothWindX * smoothWindX + smoothWindY * smoothWindY);
+            const maxStrength = 50;
+            const normalizedStrength = Math.min(1, strength / maxStrength);
+            
+            const dirX = strength > 0.5 ? smoothWindX / strength : 0;
+            const dirY = strength > 0.5 ? smoothWindY / strength : 0;
+            
+            return {
+                dx: dirX,
+                dy: dirY * 0.2,
+                strength: normalizedStrength
+            };
+        }
+        
+        // Calculate subtle displacement for a branch point
+        function getWindDisplacement(x, y, thickness, isRoot, branchDepth) {
+            if (isRoot) return { dx: 0, dy: 0 };
+            
+            const wind = getWindVector();
+            if (wind.strength < 0.05) return { dx: 0, dy: 0 };
+            
+            const groundY = canvas.height * 0.5;
+            const treeTop = groundY - 300;
+            
+            // Height factor
+            const heightAboveGround = groundY - y;
+            const heightFactor = Math.max(0, heightAboveGround / (groundY - treeTop));
+            
+            // Flexibility: thinner branches move more
+            const flexibility = Math.pow(Math.max(0.3, 1 - thickness / 12), 1.2);
+            
+            // Depth factor
+            const depthFactor = 1 + branchDepth * 0.08;
+            
+            // Subtle - max 8px displacement
+            const maxSway = 8;
+            const displacement = maxSway * wind.strength * heightFactor * flexibility * depthFactor;
+            
+            return {
+                dx: wind.dx * displacement,
+                dy: wind.dy * displacement * 0.3
+            };
+        }
+        
+        // Draw a branch with growth progress based on its individual timing
+        function drawBranchWithTiming(branch, globalTime) {
+            if (globalTime < branch.growthStart) return;
+            
+            const localDuration = branch.growthEnd - branch.growthStart;
+            let localProgress = Math.min(1, (globalTime - branch.growthStart) / localDuration);
+            
+            if (branch.easePower) {
+                localProgress = Math.pow(localProgress, branch.easePower);
+            }
+            
+            if (localProgress <= 0) return;
+            
+            // Calculate base positions
+            let currentEndX = branch.startX + (branch.endX - branch.startX) * localProgress;
+            let currentEndY = branch.startY + (branch.endY - branch.startY) * localProgress;
+            let currentMidX = branch.startX + (branch.midX - branch.startX) * localProgress;
+            let currentMidY = branch.startY + (branch.midY - branch.startY) * localProgress;
+            
+            // Apply subtle wind displacement - all points move together mostly
+            const windDisp = getWindDisplacement(branch.startY, branch.startY, branch.thickness, branch.isRoot, branch.depth);
+            
+            // All points get similar displacement (unified movement)
+            const startX = branch.startX + windDisp.dx * 0.9;
+            const startY = branch.startY + windDisp.dy * 0.9;
+            currentMidX += windDisp.dx * 0.95;
+            currentMidY += windDisp.dy * 0.95;
+            currentEndX += windDisp.dx;
+            currentEndY += windDisp.dy;
+            
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.quadraticCurveTo(currentMidX, currentMidY, currentEndX, currentEndY);
+            
+            ctx.strokeStyle = `rgba(30, 25, 20, ${0.55 + branch.thickness * 0.045})`;
+            ctx.lineWidth = branch.thickness * (0.6 + localProgress * 0.4);
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        }
+        
+        // Draw trunk with growth and very subtle wind bending
+        function drawTrunk(x, groundY, height, thickness, growth) {
+            if (growth <= 0) return groundY;
+            
+            const currentHeight = height * growth;
+            const wind = getWindVector();
+            
+            ctx.beginPath();
+            const segments = 20;
+            const segmentHeight = currentHeight / segments;
+            
+            ctx.moveTo(x - thickness / 2, groundY);
+            for (let i = 0; i <= segments; i++) {
+                const t = i / segments;
+                const baseY = groundY - i * segmentHeight;
+                const taper = 1 - t * 0.55;
+                const wobble = Math.sin(t * 2.5) * 1.5 * growth;
+                
+                // Very subtle wind bend - only at the very top
+                const windBend = wind.dx * wind.strength * t * t * t * 2;
+                
+                ctx.lineTo(x - thickness / 2 * taper + wobble + windBend, baseY);
+            }
+            
+            for (let i = segments; i >= 0; i--) {
+                const t = i / segments;
+                const baseY = groundY - i * segmentHeight;
+                const taper = 1 - t * 0.55;
+                const wobble = Math.sin(t * 2.5 + 0.8) * 1.5 * growth;
+                
+                const windBend = wind.dx * wind.strength * t * t * t * 2;
+                
+                ctx.lineTo(x + thickness / 2 * taper + wobble + windBend, baseY);
+            }
+            
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(30, 25, 20, 0.9)';
+            ctx.fill();
+            
+            return groundY - currentHeight;
+        }
+        
+        // Draw root buttresses
+        function drawRootButtresses(x, groundY, thickness, rootData, growth) {
+            if (growth <= 0) return;
+            
+            const buttressGrowth = Math.max(0, (growth - 0.1) / 0.9);
+            if (buttressGrowth <= 0) return;
+            
+            const mainRoots = rootData.filter(r => r.depth === 0);
+            const leftRoots = mainRoots.filter(r => r.endX < x).sort((a, b) => a.startX - b.startX);
+            const rightRoots = mainRoots.filter(r => r.endX > x).sort((a, b) => b.startX - a.startX);
+            
+            // Draw LEFT side buttress
+            if (leftRoots.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(x - 2, groundY + 5);
+                ctx.lineTo(x - thickness / 2, groundY);
+                
+                const outerLeft = leftRoots[0];
+                const outerLeftX = outerLeft.startX + (outerLeft.endX - outerLeft.startX) * 0.35 * buttressGrowth;
+                const outerLeftY = outerLeft.startY + (outerLeft.endY - outerLeft.startY) * 0.35 * buttressGrowth;
+                
+                ctx.bezierCurveTo(
+                    x - thickness / 2 - 10, groundY + 8,
+                    outerLeftX + 20, outerLeftY - 5,
+                    outerLeftX, outerLeftY
+                );
+                
+                for (let i = 0; i < leftRoots.length; i++) {
+                    const root = leftRoots[i];
+                    const progress = 0.25 - i * 0.05;
+                    const rx = root.startX + (root.endX - root.startX) * progress * buttressGrowth;
+                    const ry = root.startY + (root.endY - root.startY) * progress * buttressGrowth + root.thickness * 0.8;
+                    ctx.lineTo(rx, ry);
+                }
+                
+                ctx.lineTo(x - 3, groundY + 18 * buttressGrowth);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(30, 25, 20, 0.9)';
+                ctx.fill();
+            }
+            
+            // Draw RIGHT side buttress
+            if (rightRoots.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(x + 2, groundY + 5);
+                ctx.lineTo(x + thickness / 2, groundY);
+                
+                const outerRight = rightRoots[0];
+                const outerRightX = outerRight.startX + (outerRight.endX - outerRight.startX) * 0.35 * buttressGrowth;
+                const outerRightY = outerRight.startY + (outerRight.endY - outerRight.startY) * 0.35 * buttressGrowth;
+                
+                ctx.bezierCurveTo(
+                    x + thickness / 2 + 10, groundY + 8,
+                    outerRightX - 20, outerRightY - 5,
+                    outerRightX, outerRightY
+                );
+                
+                for (let i = 0; i < rightRoots.length; i++) {
+                    const root = rightRoots[i];
+                    const progress = 0.25 - i * 0.05;
+                    const rx = root.startX + (root.endX - root.startX) * progress * buttressGrowth;
+                    const ry = root.startY + (root.endY - root.startY) * progress * buttressGrowth + root.thickness * 0.8;
+                    ctx.lineTo(rx, ry);
+                }
+                
+                ctx.lineTo(x + 3, groundY + 18 * buttressGrowth);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(30, 25, 20, 0.9)';
+                ctx.fill();
+            }
+            
+            // Central tap root connection
+            ctx.beginPath();
+            ctx.moveTo(x - thickness / 3, groundY);
+            ctx.bezierCurveTo(
+                x - thickness / 4, groundY + 12 * buttressGrowth,
+                x - 4, groundY + 22 * buttressGrowth,
+                x, groundY + 25 * buttressGrowth
+            );
+            ctx.bezierCurveTo(
+                x + 4, groundY + 22 * buttressGrowth,
+                x + thickness / 4, groundY + 12 * buttressGrowth,
+                x + thickness / 3, groundY
+            );
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(30, 25, 20, 0.9)';
+            ctx.fill();
+        }
+        
+        // Draw seed
+        function drawSeed(x, y, growth) {
+            const size = 5 * growth;
+            ctx.beginPath();
+            ctx.ellipse(x, y, size, size * 1.3, 0, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(50, 40, 30, ${growth})`;
+            ctx.fill();
+        }
+        
+        // Draw ground line
+        function drawGroundLine(y, growth) {
+            ctx.beginPath();
+            const width = (canvas.width - 100) * Math.min(1, growth * 2);
+            ctx.moveTo(canvas.width / 2 - width / 2, y);
+            ctx.lineTo(canvas.width / 2 + width / 2, y);
+            ctx.strokeStyle = `rgba(30, 25, 20, ${0.3 * Math.min(1, growth * 2)})`;
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        
+        // Draw label
+        function drawLabel(text, x, y, opacity) {
+            if (opacity <= 0) return;
+            ctx.font = 'italic 14px Georgia, serif';
+            ctx.fillStyle = `rgba(60, 55, 50, ${opacity * 0.8})`;
+            ctx.textAlign = 'center';
+            ctx.fillText(text, x, y);
+        }
+        
+        // Smoothstep for easing
+        function smoothstep(min, max, value) {
+            const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+            return x * x * (3 - 2 * x);
+        }
+        
+        // Draw sliding text elements - responsive sizing
+        function drawSlidingText(scrollProgress, centerX, groundY) {
+            // Start sliding in at 85% scroll
+            const slidePhase = smoothstep(0.85, 0.98, scrollProgress);
+            if (slidePhase <= 0) return;
+            
+            const trunkLeftEdge = centerX - 14;
+            const trunkRightEdge = centerX + 14;
+            
+            // Responsive font sizes based on screen width
+            const isMobile = window.innerWidth <= 768;
+            const lbsbFontSize = isMobile ? 48 : 72;
+            const taglineFontSize = isMobile ? 10 : 13;
+            const lineHeight = isMobile ? 14 : 18;
+            
+            // LBSB - slides from left
+            const lbsbTargetX = trunkLeftEdge - (isMobile ? 10 : 15);
+            const lbsbStartX = -200;
+            const lbsbCurrentX = lbsbStartX + (lbsbTargetX - lbsbStartX) * slidePhase;
+            
+            ctx.font = `900 ${lbsbFontSize}px Roboto, sans-serif`;
+            ctx.fillStyle = `rgba(30, 25, 20, ${slidePhase * 0.9})`;
+            ctx.textAlign = 'right';
+            ctx.fillText('LBSB', lbsbCurrentX, groundY - 15);
+            
+            // Tagline - slides from right
+            const taglineTargetX = trunkRightEdge + (isMobile ? 10 : 15);
+            const taglineStartX = canvasWidth + 300;
+            const taglineCurrentX = taglineStartX + (taglineTargetX - taglineStartX) * slidePhase;
+            
+            ctx.font = `italic ${taglineFontSize}px Roboto, sans-serif`;
+            ctx.fillStyle = `rgba(60, 55, 50, ${slidePhase * 0.8})`;
+            ctx.textAlign = 'left';
+            
+            ctx.fillText('You learn and grow', taglineCurrentX, groundY - 30);
+            ctx.fillText('to create and give back', taglineCurrentX, groundY - 30 + lineHeight);
+        }
+        
+        // Main draw function - HOME section (tree)
+        function draw(scrollProgress) {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            
+            // Calculate home progress (0-1 mapped to first half of scroll)
+            const homeProgress = Math.min(1, scrollProgress / SECTION_HOME_END);
+            
+            const centerX = canvasWidth / 2;
+            const groundY = GROUND_Y;
+            
+            drawGroundLine(groundY, homeProgress);
+            
+            // Seed phase
+            const seedPhase = smoothstep(0, 0.08, homeProgress);
+            if (seedPhase > 0 && homeProgress < 0.3) {
+                drawSeed(centerX, groundY, seedPhase * (1 - smoothstep(0.15, 0.3, homeProgress)));
+            }
+            
+            // Draw roots with sequential timing
+            rootCache.forEach(branch => {
+                drawBranchWithTiming(branch, homeProgress);
+            });
+            
+            // Trunk grows from 0.15 to 0.40
+            const trunkPhase = smoothstep(0.15, 0.40, homeProgress);
+            drawTrunk(centerX, groundY, 85, 28, trunkPhase);
+            
+            // Root buttresses
+            const buttressPhase = smoothstep(0.08, 0.35, homeProgress);
+            drawRootButtresses(centerX, groundY, 28, rootCache, buttressPhase);
+            
+            // Draw canopy branches with sequential timing
+            branchCache.forEach(branch => {
+                drawBranchWithTiming(branch, homeProgress);
+            });
+            
+            // Draw sliding text (LBSB and tagline)
+            drawSlidingText(homeProgress, centerX, groundY);
+        }
+        
+        // Initialize
+        initializeTree();
+        
+        // Store current scroll progress for animation loop
+        let currentScrollProgress = 0;
+        
+        // Section timing (tree completes at 100% scroll for smoother animation)
+        const SECTION_HOME_END = 1.0;
+        
+        // Handle scroll with section management
+        function handleScroll() {
+            const scrollTop = window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            currentScrollProgress = Math.min(1, scrollTop / maxScroll);
+            
+            progressFill.style.height = (currentScrollProgress * 100) + '%';
+            scrollHint.style.opacity = currentScrollProgress > 0.05 ? '0' : '1';
+            
+            // Calculate home section progress (0-1 mapped to first half of scroll)
+            const homeProgress = Math.min(1, currentScrollProgress / SECTION_HOME_END);
+            
+            // Show nav bar, logo, and footer when LBSB text appears (85% of home section)
+            if (homeProgress > 0.85) {
+                navBar.classList.add('visible');
+                logo.classList.add('visible');
+                footer.classList.add('visible');
+            } else {
+                navBar.classList.remove('visible');
+                logo.classList.remove('visible');
+                footer.classList.remove('visible');
+            }
+        }
+        
+        // Mouse event handlers
+        canvas.addEventListener('mouseenter', () => {
+            isMouseOverCanvas = true;
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            isMouseOverCanvas = false;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Calculate velocity
+            mouseVelX = mouseX - prevMouseX;
+            mouseVelY = mouseY - prevMouseY;
+        });
+        
+        // Touch event handlers for mobile
+        canvas.addEventListener('touchstart', (e) => {
+            isMouseOverCanvas = true;
+            const touch = e.touches[0];
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+        }, { passive: true });
+        
+        canvas.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+            mouseX = touch.clientX;
+            mouseY = touch.clientY;
+            
+            mouseVelX = mouseX - prevMouseX;
+            mouseVelY = mouseY - prevMouseY;
+        }, { passive: true });
+        
+        canvas.addEventListener('touchend', () => {
+            isMouseOverCanvas = false;
+        });
+        
+        // Animation loop for smooth wind effect
+        function animate() {
+            // Smooth the wind velocity (lerp toward current, decay when still)
+            const windLerpSpeed = 0.15;
+            const windDecay = 0.95;
+            
+            if (isMouseOverCanvas) {
+                // Follow cursor velocity
+                smoothWindX += (mouseVelX - smoothWindX) * windLerpSpeed;
+                smoothWindY += (mouseVelY - smoothWindY) * windLerpSpeed;
+            }
+            
+            // Always decay (wind dies down when cursor stops or leaves)
+            smoothWindX *= windDecay;
+            smoothWindY *= windDecay;
+            
+            // Reset velocity tracking each frame
+            mouseVelX *= 0.5;
+            mouseVelY *= 0.5;
+            
+            // Redraw with current scroll progress
+            draw(currentScrollProgress);
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            draw(currentScrollProgress);
+        });
+        
+        // Initial setup
+        resizeCanvas();
+        handleScroll();
+        animate();
+        
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        
+        // Auto-scroll to end after 1 second, taking ~3 seconds to complete
+        setTimeout(() => {
+            const startTime = performance.now();
+            const duration = 3000; // 3 seconds
+            const startScroll = window.scrollY;
+            const endScroll = document.body.scrollHeight - window.innerHeight;
+            
+            function smoothScroll(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease-in-out curve for smoother animation
+                const easeProgress = progress < 0.5
+                    ? 2 * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+                
+                window.scrollTo(0, startScroll + (endScroll - startScroll) * easeProgress);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(smoothScroll);
+                }
+            }
+            
+            requestAnimationFrame(smoothScroll);
+        }, 1000);
+    </script>
+</body>
+</html>

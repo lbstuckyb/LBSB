@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LBSB - Idea Lab</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>LBSB - Lucas Stucky</title>
+    <meta name="description" content="LBSB Idea Lab - A pressure cooker of creative ideas bursting forth">
+    <meta name="keywords" content="LBSB, Lucas Stucky, Idea Lab, Creative Ideas, SPORTTOOLS">
+    <meta name="author" content="Lucas Stucky">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lucasstucky.xyz/">
+    <meta property="og:title" content="LBSB - Lucas Stucky">
+    <meta property="og:description" content="You learn and grow, to create and give back. An interactive experience.">
+    <meta property="og:image" content="https://lucasstucky.xyz/og-image.png">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LBSB - Lucas Stucky">
+    <meta name="twitter:description" content="You learn and grow, to create and give back. An interactive experience.">
+    <meta name="twitter:image" content="https://lucasstucky.xyz/og-image.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path fill='%231e1914' d='M16 28c0 0-1-1-1-2s1-2 1-2V20c-3 0-6 2-8 4l1-5c1-2 4-3 7-3V12c-2-1-3-3-3-5 0 0 2 1 3 3V6c0-2 0-4 0-4s0 2 0 4v4c1-2 3-3 3-3 0 2-1 4-3 5v4c3 0 6 1 7 3l1 5c-2-2-5-4-8-4v4s1 1 1 2-1 2-1 2z'/></svg>">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,900;1,400&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            height: 100vh;
+            background: linear-gradient(to bottom, #fafafa 0%, #f5f5f0 100%);
+            font-family: Georgia, serif;
+            overflow: hidden;
+        }
+        
+        .canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        canvas {
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            outline: none;
+        }
+        
+        @media (max-width: 768px) {
+            canvas {
+                box-shadow: none;
+                background: transparent;
+            }
+            body {
+                background: #fdfcfa;
+            }
+        }
+        
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 100;
+            opacity: 1;
+            pointer-events: auto;
+            background: linear-gradient(to bottom, #fafafa 0%, rgba(250, 250, 250, 0) 100%);
+        }
+        
+        .nav-btn {
+            position: relative;
+            padding: 7px 18px;
+            background: transparent;
+            border: 1.5px solid rgba(30, 25, 20, 0.8);
+            color: rgba(30, 25, 20, 0.9);
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            font-size: 11px;
+            cursor: pointer;
+            clip-path: polygon(
+                0 0,
+                calc(100% - 10px) 0,
+                100% 10px,
+                100% 100%,
+                10px 100%,
+                0 calc(100% - 10px)
+            );
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(30, 25, 20, 0.1);
+        }
+        
+        .nav-btn.active {
+            background: rgba(30, 25, 20, 0.85);
+            color: #fdfcfa;
+        }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 1.5px solid rgba(30, 25, 20, 0.8);
+            clip-path: polygon(
+                0 0,
+                calc(100% - 10px) 0,
+                100% 10px,
+                100% 100%,
+                10px 100%,
+                0 calc(100% - 10px)
+            );
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar {
+                top: 10px;
+                gap: 10px;
+            }
+            .nav-btn {
+                padding: 6px 14px;
+                font-size: 10px;
+                clip-path: polygon(
+                    0 0,
+                    calc(100% - 7px) 0,
+                    100% 7px,
+                    100% 100%,
+                    7px 100%,
+                    0 calc(100% - 7px)
+                );
+            }
+        }
+        
+        /* ========== LOGO - Top Left ========== */
+        .logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            font-size: 18px;
+            color: rgba(30, 25, 20, 0.9);
+            z-index: 100;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                top: 10px;
+                left: 10px;
+                font-size: 14px;
+            }
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 11px;
+            color: rgba(60, 55, 50, 0.6);
+            z-index: 100;
+        }
+        
+        .footer-left,
+        .footer-right {
+            transition: transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .footer.split .footer-left {
+            transform: translateX(-120px);
+        }
+        
+        .footer.split .footer-right {
+            transform: translateX(120px);
+        }
+        
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer a {
+            color: rgba(60, 55, 50, 0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer a:hover {
+            color: rgba(30, 25, 20, 0.9);
+        }
+
+        .linkedin-icon {
+            width: 18px;
+            height: 18px;
+            fill: rgba(60, 55, 50, 0.6);
+            transition: fill 0.3s ease;
+        }
+
+        .linkedin-icon:hover {
+            fill: rgba(30, 25, 20, 0.9);
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                bottom: 10px;
+                font-size: 9px;
+            }
+            .footer.split .footer-left {
+                transform: translateX(-80px);
+            }
+            .footer.split .footer-right {
+                transform: translateX(80px);
+            }
+            .linkedin-icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        
+        /* Head image styles */
+        /* IMAGES ARE 500x500px - designed to overlay at same position to form complete face */
+        .head-container {
+            position: fixed;
+            top: 70%;
+            left: calc(50% + 78.5px);
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            /* Container matches image aspect */
+            width: 400px;
+            height: 400px;
+        }
+        
+        /* Vibration animation for pressure cooker effect */
+        @keyframes vibrate {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            10% { transform: translate(-2px, -1px) rotate(-0.5deg); }
+            20% { transform: translate(2px, 1px) rotate(0.5deg); }
+            30% { transform: translate(-1px, -2px) rotate(-0.3deg); }
+            40% { transform: translate(1px, 2px) rotate(0.3deg); }
+            50% { transform: translate(-2px, 0px) rotate(-0.5deg); }
+            60% { transform: translate(2px, -1px) rotate(0.5deg); }
+            70% { transform: translate(-1px, 1px) rotate(-0.3deg); }
+            80% { transform: translate(1px, -1px) rotate(0.3deg); }
+            90% { transform: translate(-2px, 1px) rotate(-0.5deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        
+        /* Subtle glow pulse at the seam */
+        @keyframes seamGlow {
+            0%, 100% { box-shadow: 0 10px 20px rgba(30, 25, 20, 0.1); }
+            50% { box-shadow: 0 10px 30px rgba(30, 25, 20, 0.25); }
+        }
+        
+        /* Steam particle animation */
+        @keyframes steamRise {
+            0% { 
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: translateY(-20px) translateX(var(--drift, 5px)) scale(1.2);
+                opacity: 0.3;
+            }
+            100% { 
+                transform: translateY(-40px) translateX(var(--drift, 5px)) scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        /* Gentle bobbing for settled head top */
+        @keyframes gentleBob {
+            0%, 100% { 
+                transform: translate(100px, 50px) rotate(180deg);
+            }
+            50% { 
+                transform: translate(100px, 45px) rotate(178deg);
+            }
+        }
+        
+        /* River will be drawn on canvas */
+        
+        /* ============================================
+           FOUNTAIN CARDS SYSTEM
+           ============================================ */
+        
+        .fountain-cards-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .fountain-card {
+            width: 600px;
+            min-height: 180px;
+            background: rgba(30, 25, 20, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            pointer-events: auto;
+            /* Start at inception point */
+            left: var(--inception-x);
+            top: var(--inception-y);
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+        
+        .fountain-card .card-number {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 1px;
+        }
+        
+        .fountain-card .sporttools-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .fountain-card .sporttools-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .fountain-card .logo-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 6px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .fountain-card .logo-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: rgba(30, 25, 20, 0.95);
+        }
+        
+        .fountain-card .logo-text {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+        
+        .fountain-card.card-center .sporttools-logo {
+            animation: fadeInText 0.6s ease-out forwards;
+            animation-delay: 2s;
+        }
+        
+        .fountain-card .card-title {
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-size: 48px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        .fountain-card .card-desc {
+            color: rgba(255, 255, 255, 0.6);
+            font-family: 'Roboto', sans-serif;
+            font-size: 28px;
+            text-align: center;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        /* Card - Center (Main card, covers head) */
+        .fountain-card.card-center {
+            animation: fountainArcCenter 2s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+            z-index: 3;
+        }
+        
+        .fountain-card.card-center .card-title {
+            animation: fadeInText 0.6s ease-out forwards;
+            animation-delay: 2s;
+        }
+        
+        .fountain-card.card-center .card-desc {
+            animation: fadeInText 0.6s ease-out forwards;
+            animation-delay: 2.2s;
+        }
+        
+        /* Card expanded description (shown on click) */
+        .fountain-card .card-expanded {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .fountain-card .card-expanded.visible {
+            display: flex;
+            animation: fadeInText 0.4s ease-out forwards;
+        }
+        
+        .fountain-card .card-expanded-desc {
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        .fountain-card .card-go-link {
+            color: #fff;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 8px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .fountain-card .card-go-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Swap animation for replaced cards */
+        .fountain-card.card-swap {
+            animation: cardSwapIn 0.5s ease-out forwards;
+        }
+        
+        .fountain-card.card-swap .card-title,
+        .fountain-card.card-swap .card-desc,
+        .fountain-card.card-swap .sporttools-logo {
+            animation: fadeInText 0.4s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+        
+        @keyframes cardSwapIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Center arc - lands over the head */
+        @keyframes fountainArcCenter {
+            0% {
+                left: var(--inception-x);
+                top: var(--inception-y);
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            50% {
+                left: 50%;
+                top: 15%;
+                transform: translate(-50%, -50%) scale(0.6);
+            }
+            100% {
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeInText {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Hover states */
+        .fountain-card:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+        }
+        
+        .fountain-card.card-center:hover {
+            transform: translate(-50%, -50%) scale(1.02);
+        }
+        
+        /* Transition for carousel movement */
+        .fountain-card {
+            transition: transform 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .fountain-card {
+                width: 320px;
+                min-height: 120px;
+                padding: 25px;
+            }
+            
+            .fountain-card .card-number {
+                top: 15px;
+                right: 20px;
+                font-size: 16px;
+            }
+            
+            .fountain-card .card-title {
+                font-size: 24px;
+                letter-spacing: 3px;
+            }
+            
+            .fountain-card .card-desc {
+                font-size: 14px;
+            }
+            
+            .fountain-card .sporttools-logo {
+                gap: 8px;
+            }
+            
+            .fountain-card .logo-icon {
+                width: 32px;
+                height: 32px;
+            }
+            
+            .fountain-card .logo-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .fountain-card .logo-text {
+                font-size: 20px;
+            }
+        }
+        
+        .head-part {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .head-top {
+            z-index: 2;
+            cursor: pointer;
+        }
+        
+        .head-top:hover {
+            animation: vibrate 0.15s infinite;
+        }
+        
+        /* Steam particles container - aligned with head opening */
+        /* In 500px coords: left edge at 105px, width 133px, center at 171.5px */
+        /* At 400px display: 171.5 * 0.8 = 137.2px from left, which is 137.2/400 = 34.3% */
+        .steam-container {
+            position: absolute;
+            top: calc(218 * 0.8px);  /* 218px from top in 500px scale = 174.4px at 400px */
+            left: calc(171.5 * 0.8px);  /* Center of opening */
+            transform: translate(-50%, -100%);
+            width: calc(133 * 0.8px);  /* Width of opening */
+            height: 60px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .steam-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: rgba(30, 25, 20, 0.4);
+            border-radius: 50%;
+            animation: steamRise 1.5s ease-out infinite;
+        }
+        
+        .head-bottom {
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .head-container {
+                width: 300px;
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo (links to home) -->
+    <a href="index.html" class="logo" id="logo">LBSB</a>
+    
+    <!-- Navigation Bar -->
+    <nav class="nav-bar" id="navBar">
+        <a href="index.html" class="nav-btn" data-section="home">Home</a>
+        <a href="idea-lab.html" class="nav-btn active" data-section="idea-lab">Idea Lab</a>
+    </nav>
+    
+    <div class="canvas-container">
+        <canvas id="labCanvas"></canvas>
+    </div>
+    
+    <!-- Head image container -->
+    <div class="head-container" id="headContainer">
+        <div class="steam-container" id="steamContainer"></div>
+        <img src="head_top.png" alt="" class="head-part head-top" id="headTop">
+        <img src="head_bottom.png" alt="" class="head-part head-bottom" id="headBottom">
+    </div>
+    
+    <!-- Footer with Copyright and LinkedIn -->
+    <footer class="footer" id="footer">
+        <span class="footer-left">© 2025 Lucas Stucky.</span>
+        <span class="footer-right">
+            All rights reserved.
+            <a href="https://www.linkedin.com/in/lucas-stucky-19b366185/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                <svg class="linkedin-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+            </a>
+        </span>
+    </footer>
+    
+    <script>
+        const canvas = document.getElementById('labCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let canvasWidth = window.innerWidth;
+        let canvasHeight = window.innerHeight;
+        const NAV_HEIGHT = 60;
+        
+        function resizeCanvas() {
+            canvasWidth = window.innerWidth;
+            canvasHeight = window.innerHeight - NAV_HEIGHT;
+            
+            canvas.style.position = 'absolute';
+            canvas.style.top = NAV_HEIGHT + 'px';
+            canvas.style.left = '0';
+            canvas.style.width = canvasWidth + 'px';
+            canvas.style.height = canvasHeight + 'px';
+            
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvasWidth * dpr;
+            canvas.height = canvasHeight * dpr;
+            ctx.scale(dpr, dpr);
+            
+            draw();
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        
+        resizeCanvas();
+        draw();
+        
+        // ============================================
+        // PRESSURE COOKER ANIMATION - PHASE 1: IDLE
+        // ============================================
+        
+        const headTop = document.getElementById('headTop');
+        const headBottom = document.getElementById('headBottom');
+        const headContainer = document.getElementById('headContainer');
+        const steamContainer = document.getElementById('steamContainer');
+        
+        let animationTriggered = false;
+        let steamInterval = null;
+        let isHovering = false;
+        
+        // Create steam particles
+        function createSteamParticle() {
+            if (animationTriggered || !isHovering) return;
+            
+            const particle = document.createElement('div');
+            particle.className = 'steam-particle';
+            
+            // Random horizontal position within container
+            const xPos = Math.random() * 80 + 10; // 10-90px
+            particle.style.left = xPos + 'px';
+            
+            // Random drift direction
+            const drift = (Math.random() - 0.5) * 20;
+            particle.style.setProperty('--drift', drift + 'px');
+            
+            // Random delay for more organic feel
+            particle.style.animationDelay = (Math.random() * 0.5) + 's';
+            
+            // Random size variation
+            const size = 4 + Math.random() * 4;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            steamContainer.appendChild(particle);
+            
+            // Remove particle after animation
+            setTimeout(() => {
+                particle.remove();
+            }, 1500);
+        }
+        
+        // Start steam on hover
+        function startSteam() {
+            if (animationTriggered) return;
+            isHovering = true;
+            steamInterval = setInterval(() => {
+                if (!animationTriggered && isHovering) {
+                    createSteamParticle();
+                    if (Math.random() > 0.6) {
+                        setTimeout(createSteamParticle, 50);
+                    }
+                }
+            }, 200);
+        }
+        
+        // Stop steam when not hovering
+        function stopSteam() {
+            isHovering = false;
+            if (steamInterval) {
+                clearInterval(steamInterval);
+                steamInterval = null;
+            }
+        }
+        
+        // Hover listeners for steam
+        headTop.addEventListener('mouseenter', startSteam);
+        headTop.addEventListener('mouseleave', stopSteam);
+        headBottom.addEventListener('mouseenter', startSteam);
+        headBottom.addEventListener('mouseleave', stopSteam);
+        
+        // Trigger detection - click on head or scroll
+        function triggerPop() {
+            if (animationTriggered) return;
+            animationTriggered = true;
+            
+            console.log('POP! Animation triggered');
+            
+            // Stop vibration
+            headTop.style.animation = 'none';
+            
+            // Stop steam
+            clearInterval(steamInterval);
+            steamContainer.innerHTML = '';
+            
+            // Phase 2: The Pop - fly up then fall to the side, bottom-up (flipped)
+            headTop.style.transition = 'none';
+            headTop.style.transformOrigin = 'center center';
+            
+            // Animation sequence using keyframes - smoother with longer duration
+            let startTime = null;
+            const duration = 1600; // Longer for smoother animation
+            
+            function animatePop(timestamp) {
+                if (!startTime) startTime = timestamp;
+                const elapsed = timestamp - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Phase 1 (0-25%): Fly up with slight rotation
+                // Phase 2 (25-100%): Arc to the side and flip upside down
+                
+                let x, y, rotation;
+                
+                if (progress < 0.25) {
+                    // Flying up phase - smooth ease out
+                    const upProgress = progress / 0.25;
+                    const easeOut = 1 - Math.pow(1 - upProgress, 4); // Smoother quartic ease
+                    x = upProgress * 20; // Slight rightward drift during rise
+                    y = -150 * easeOut;
+                    rotation = 15 * easeOut;
+                } else {
+                    // Falling to the side phase - smooth bezier-like curve
+                    const fallProgress = (progress - 0.25) / 0.75;
+                    // Smooth S-curve easing
+                    const easeInOut = fallProgress < 0.5 
+                        ? 4 * fallProgress * fallProgress * fallProgress 
+                        : 1 - Math.pow(-2 * fallProgress + 2, 3) / 2;
+                    
+                    x = 20 + (80 * easeInOut); // Move to the right (100px total)
+                    y = -150 + (200 * Math.pow(fallProgress, 1.5)); // Gentler fall curve
+                    rotation = 15 + (165 * easeInOut); // Rotate to ~180 degrees (upside down)
+                }
+                
+                headTop.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animatePop);
+                } else {
+                    // Final position - slight bobbing animation
+                    headTop.style.transition = 'transform 2s ease-in-out infinite';
+                    headTop.style.animation = 'gentleBob 3s ease-in-out infinite';
+                }
+            }
+            
+            requestAnimationFrame(animatePop);
+            
+            // Start the river flow after head pops
+            setTimeout(startRiverFlow, 200);
+        }
+        
+        // ============================================
+        // PHASE 3: BLACK RIVER FLOW
+        // ============================================
+        
+        let riverActive = false;
+        let riverProgress = 0;
+        let riverTime = 0;
+        let riverWidthProgress = 0; // 0 to 1 over 3 seconds
+        const RIVER_FLOW_SPEED = 0.025;
+        const RIVER_START_WIDTH = 60;
+        const RIVER_WIDEN_DURATION = 3000; // 3 seconds to reach full width
+        let riverStartTime = 0;
+        
+        // Ideas array - first is SPORTTOOLS logo, second is placeholder
+        let ideas = [
+            { number: '01', title: 'SPORTTOOLS', desc: 'community collaborative space for sports tools built with AI', type: 'logo', link: 'index.html' },
+            { number: '02', title: 'Thinking', desc: 'more to come', type: 'text' },
+        ];
+        let currentIdeaIndex = 0;
+        let cardsLaunched = false;
+        
+        // Load ideas from markdown file
+        async function loadIdeasFromMarkdown() {
+            try {
+                const response = await fetch('ideas.md');
+                if (response.ok) {
+                    const text = await response.text();
+                    const parsed = parseMarkdownIdeas(text);
+                    if (parsed.length > 0) {
+                        ideas = parsed;
+                    }
+                }
+            } catch (e) {
+                console.log('Using default ideas (no ideas.md found)');
+            }
+        }
+        
+        // Parse markdown format: ## 01 | Title \n Description
+        function parseMarkdownIdeas(markdown) {
+            const ideaBlocks = markdown.split(/^## /gm).filter(block => block.trim());
+            return ideaBlocks.map(block => {
+                const lines = block.trim().split('\n');
+                const headerMatch = lines[0].match(/^(\d+)\s*\|\s*(.+)$/);
+                if (headerMatch) {
+                    return {
+                        number: headerMatch[1].padStart(2, '0'),
+                        title: headerMatch[2].trim(),
+                        desc: lines.slice(1).join(' ').trim()
+                    };
+                }
+                return null;
+            }).filter(idea => idea !== null);
+        }
+        
+        // Load ideas on page load
+        loadIdeasFromMarkdown();
+        
+        // Get the opening position (where river flows from)
+        function getOpeningPosition() {
+            const headRect = headBottom.getBoundingClientRect();
+            const scale = headRect.width / 500;
+            
+            // Opening center: 171.5px from left, 240px from top (in 500px coords)
+            return {
+                x: headRect.left + 171.5 * scale,
+                y: headRect.top + 240 * scale - NAV_HEIGHT, // Lower so inception is covered
+                width: 133 * scale
+            };
+        }
+        
+        function getRiverX(y, t, startX, startY) {
+            // Ferocious side-to-side movement
+            const distFromStart = startY - y;
+            const totalDist = startY;
+            const curveStrength = Math.min(1, distFromStart / totalDist);
+            
+            // Multiple aggressive waves
+            const wave1 = Math.sin(y * 0.015 + t * 2) * 80 * curveStrength;
+            const wave2 = Math.sin(y * 0.008 - t * 1.5) * 60 * curveStrength;
+            const wave3 = Math.sin(y * 0.025 + t * 3) * 40 * curveStrength;
+            const wave4 = Math.cos(y * 0.012 + t * 2.5) * 30 * curveStrength;
+            
+            return startX + wave1 + wave2 + wave3 + wave4;
+        }
+        
+        function getRiverWidth(y, t, startY) {
+            const distFromStart = startY - y;
+            const totalDist = startY;
+            const progress = distFromStart / totalDist;
+            
+            // River should hit full width at 60% up the screen (progress ~0.6)
+            const adjustedProgress = Math.min(1, progress * 1.6);
+            const eased = adjustedProgress * adjustedProgress;
+            
+            // Target width grows progressively over 3 seconds (riverWidthProgress 0→1)
+            const minTargetWidth = canvasWidth * 0.1; // Start slim at 10%
+            const maxTargetWidth = canvasWidth * 2.5; // End wide
+            const currentTargetWidth = minTargetWidth + (maxTargetWidth - minTargetWidth) * riverWidthProgress;
+            
+            // Add some turbulent width variation
+            const turbulence = Math.sin(y * 0.02 + t * 2) * 25 * progress * riverWidthProgress;
+            
+            return RIVER_START_WIDTH + (currentTargetWidth - RIVER_START_WIDTH) * eased + turbulence;
+        }
+        
+        function drawRiver() {
+            const opening = getOpeningPosition();
+            const startX = opening.x;
+            const startY = opening.y;
+            
+            // Track time for progressive widening
+            if (riverStartTime === 0) {
+                riverStartTime = performance.now();
+            }
+            const elapsed = performance.now() - riverStartTime;
+            
+            // Progressive widening: 0 to 1 over 3 seconds with ease-out
+            const rawWidthProgress = Math.min(1, elapsed / RIVER_WIDEN_DURATION);
+            riverWidthProgress = 1 - Math.pow(1 - rawWidthProgress, 2); // Ease out
+            
+            // Animate river growing (vertical reach)
+            if (riverProgress < 1) {
+                riverProgress += 0.02;
+            }
+            
+            const currentReach = startY * riverProgress;
+            const segments = Math.floor(100 * riverProgress);
+            const segmentHeight = currentReach / Math.max(1, segments);
+            
+            // Draw river
+            ctx.fillStyle = 'rgba(30, 25, 20, 0.95)';
+            ctx.beginPath();
+            
+            // Start from source
+            ctx.moveTo(startX, startY);
+            
+            // Left edge going up
+            for (let i = 0; i <= segments; i++) {
+                const y = startY - i * segmentHeight;
+                const x = getRiverX(y, riverTime, startX, startY);
+                const w = getRiverWidth(y, riverTime, startY);
+                ctx.lineTo(x - w / 2, y);
+            }
+            
+            // Right edge going down
+            for (let i = segments; i >= 0; i--) {
+                const y = startY - i * segmentHeight;
+                const x = getRiverX(y, riverTime, startX, startY);
+                const w = getRiverWidth(y, riverTime, startY);
+                ctx.lineTo(x + w / 2, y);
+            }
+            
+            ctx.closePath();
+            ctx.fill();
+            
+            // Source point (covers the head opening)
+            ctx.beginPath();
+            ctx.arc(startX, startY, RIVER_START_WIDTH / 2 + 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Flowing particles for texture
+            if (riverProgress > 0.3) {
+                ctx.fillStyle = 'rgba(50, 45, 40, 0.6)';
+                for (let i = 0; i < 60; i++) {
+                    const seed = i * 137.5;
+                    const particleProgress = ((riverTime * 80 + seed) % (currentReach + 50)) / currentReach;
+                    const particleY = startY - particleProgress * currentReach;
+                    
+                    if (particleY > startY - currentReach && particleY < startY - 20) {
+                        const x = getRiverX(particleY, riverTime, startX, startY);
+                        const w = getRiverWidth(particleY, riverTime, startY);
+                        const offsetX = Math.sin(seed) * (w / 2 - 15) * 0.6;
+                        const size = 2 + Math.sin(seed * 2) * 1;
+                        
+                        ctx.beginPath();
+                        ctx.ellipse(x + offsetX, particleY, size, size * 3, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+            }
+            
+            riverTime += RIVER_FLOW_SPEED;
+        }
+        
+        function startRiverFlow() {
+            riverActive = true;
+            
+            // Slide head container down (partially out of frame)
+            headContainer.style.transition = 'top 1.5s cubic-bezier(0.25, 0.1, 0.25, 1)';
+            headContainer.style.top = '95%'; // Move down near bottom of screen
+            
+            // Split footer to avoid head overlap
+            const footer = document.getElementById('footer');
+            footer.classList.add('split');
+            
+            // Launch fountain cards after river starts
+            setTimeout(launchFountainCards, 1000);
+            
+            function animateRiver() {
+                if (!riverActive) return;
+                
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                drawRiver();
+                
+                requestAnimationFrame(animateRiver);
+            }
+            
+            animateRiver();
+        }
+        
+        // ============================================
+        // PHASE 4: FOUNTAIN CARDS
+        // ============================================
+        
+        function launchFountainCards() {
+            if (cardsLaunched) return;
+            cardsLaunched = true;
+            
+            const opening = getOpeningPosition();
+            
+            // Create card container
+            const cardContainer = document.createElement('div');
+            cardContainer.className = 'fountain-cards-container';
+            cardContainer.id = 'fountainCards';
+            
+            // Set inception point CSS variable
+            cardContainer.style.setProperty('--inception-x', opening.x + 'px');
+            cardContainer.style.setProperty('--inception-y', (opening.y + NAV_HEIGHT) + 'px');
+            
+            // Create card based on idea type
+            const idea = ideas[currentIdeaIndex];
+            const card = document.createElement('div');
+            card.className = 'fountain-card card-center';
+            card.id = 'mainCard';
+            card.style.cursor = 'pointer';
+            
+            if (idea.type === 'logo') {
+                // SPORTTOOLS logo card
+                card.innerHTML = `
+                    <div class="sporttools-logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2a10 10 0 0 1 0 20"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="logo-text">SPORTTOOLS</span>
+                    </div>
+                    <div class="card-expanded" id="cardExpanded">
+                        <span class="card-expanded-desc">${idea.desc}</span>
+                        <a href="${idea.link}" class="card-go-link">Go to page →</a>
+                    </div>
+                `;
+            } else {
+                // Regular text card
+                card.innerHTML = `
+                    <h2 class="card-title">${idea.title}</h2>
+                    <div class="card-expanded" id="cardExpanded">
+                        <span class="card-expanded-desc">${idea.desc}</span>
+                    </div>
+                `;
+            }
+            
+            cardContainer.appendChild(card);
+            document.body.appendChild(cardContainer);
+            
+            // Add click handler to card to expand description
+            card.addEventListener('click', toggleCardExpanded);
+            
+            // Add click handler to HEAD (not card) to change ideas
+            headTop.style.cursor = 'pointer';
+            headBottom.style.cursor = 'pointer';
+            headTop.addEventListener('click', nextIdea);
+            headBottom.addEventListener('click', nextIdea);
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (!cardsLaunched) return;
+                
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    nextIdea();
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    prevIdea();
+                }
+            });
+        }
+        
+        function nextIdea() {
+            currentIdeaIndex = (currentIdeaIndex + 1) % ideas.length;
+            replaceCard();
+        }
+        
+        function prevIdea() {
+            currentIdeaIndex = (currentIdeaIndex - 1 + ideas.length) % ideas.length;
+            replaceCard();
+        }
+        
+        function replaceCard() {
+            const container = document.getElementById('fountainCards');
+            const oldCard = document.getElementById('mainCard');
+            
+            // Remove old card
+            if (oldCard) {
+                oldCard.remove();
+            }
+            
+            // Create new card based on idea type
+            const idea = ideas[currentIdeaIndex];
+            const card = document.createElement('div');
+            card.className = 'fountain-card card-center';
+            card.id = 'mainCard';
+            card.style.cursor = 'pointer';
+            
+            if (idea.type === 'logo') {
+                // SPORTTOOLS logo card
+                card.innerHTML = `
+                    <div class="sporttools-logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 2a10 10 0 0 1 0 20"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                            </svg>
+                        </div>
+                        <span class="logo-text">SPORTTOOLS</span>
+                    </div>
+                    <div class="card-expanded" id="cardExpanded">
+                        <span class="card-expanded-desc">${idea.desc}</span>
+                        <a href="${idea.link}" class="card-go-link">Go to page →</a>
+                    </div>
+                `;
+            } else {
+                // Regular text card
+                card.innerHTML = `
+                    <h2 class="card-title">${idea.title}</h2>
+                    <div class="card-expanded" id="cardExpanded">
+                        <span class="card-expanded-desc">${idea.desc}</span>
+                    </div>
+                `;
+            }
+            
+            container.appendChild(card);
+            
+            // Add click handler to expand
+            card.addEventListener('click', toggleCardExpanded);
+        }
+        
+        function toggleCardExpanded(e) {
+            // Don't toggle if clicking the link
+            if (e.target.classList.contains('card-go-link')) return;
+            
+            const expanded = document.getElementById('cardExpanded');
+            if (expanded) {
+                expanded.classList.toggle('visible');
+            }
+        }
+        
+        // Click listener
+        headTop.addEventListener('click', triggerPop);
+        headBottom.addEventListener('click', triggerPop);
+        
+        // Scroll listener
+        let scrollTriggered = false;
+        window.addEventListener('wheel', (e) => {
+            if (!scrollTriggered && e.deltaY > 0) {
+                scrollTriggered = true;
+                triggerPop();
+            }
+        }, { passive: true });
+        
+        // Touch scroll for mobile
+        let touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+        
+        window.addEventListener('touchmove', (e) => {
+            if (!scrollTriggered) {
+                const touchY = e.touches[0].clientY;
+                if (touchStartY - touchY > 30) { // Scrolled down 30px
+                    scrollTriggered = true;
+                    triggerPop();
+                }
+            }
+        }, { passive: true });
+    </script>
+</body>
+</html>
